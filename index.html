@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow Kanban</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div>
+      <p class="eyebrow">TaskFlow</p>
+      <h1>Kanban Board</h1>
+      <p class="subtitle">A minimal project management board.</p>
+    </div>
+    <button id="add-task-btn" class="primary-btn">+ Add task</button>
+  </header>
+
+  <main class="board" id="board">
+    <section class="column" data-status="todo">
+      <div class="column-header">
+        <h2>To Do</h2>
+        <span class="count" id="todo-count">0</span>
+      </div>
+      <div class="task-list" id="todo-tasks"></div>
+    </section>
+
+    <section class="column" data-status="progress">
+      <div class="column-header">
+        <h2>In Progress</h2>
+        <span class="count" id="progress-count">0</span>
+      </div>
+      <div class="task-list" id="progress-tasks"></div>
+    </section>
+
+    <section class="column" data-status="done">
+      <div class="column-header">
+        <h2>Done</h2>
+        <span class="count" id="done-count">0</span>
+      </div>
+      <div class="task-list" id="done-tasks"></div>
+    </section>
+  </main>
+
+  <div id="task-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add task</h2>
+        <button id="close-modal-btn" class="icon-btn" aria-label="Close">×</button>
+      </div>
+
+      <form id="task-form">
+        <label for="task-title">Task title</label>
+        <input
+          id="task-title"
+          name="title"
+          type="text"
+          placeholder="e.g. Learn Kubernetes"
+          required
+          maxlength="100"
+        />
+
+        <label for="task-status">Column</label>
+        <select id="task-status" name="status">
+          <option value="todo">To Do</option>
+          <option value="progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+
+        <button type="submit" class="primary-btn">Add task</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

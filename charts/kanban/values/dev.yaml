@@ -1,8 +1,8 @@
 replicaCount: 2
 
 image:
-  repository: taskflow-kanban
-  tag: "1.1"
+  repository: ghcr.io/iagooteroc/kanban-platform
+  tag: "latest"
   pullPolicy: IfNotPresent
 
 service:

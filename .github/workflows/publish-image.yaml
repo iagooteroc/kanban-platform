@@ -7,12 +7,14 @@ on:
       - completed
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  IMAGE_REPOSITORY: ghcr.io/iagooteroc/kanban-platform
+  IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
 
 jobs:
   publish:
@@ -29,12 +31,57 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_REPOSITORY }}
+          tags: |
+            type=raw,value=${{ env.IMAGE_TAG }}
+            type=raw,value=latest
 
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.workflow_run.head_sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Update development image tag
+        run: |
+          sed -i -E \
+            "s|^  repository:.*|  repository: ${IMAGE_REPOSITORY}|" \
+            charts/kanban/values/dev.yaml
+
+          sed -i -E \
+            "s|^  tag:.*|  tag: ${IMAGE_TAG}|" \
+            charts/kanban/values/dev.yaml
+
+          echo "Updated development values:"
+          cat charts/kanban/values/dev.yaml
+
+      - name: Check for GitOps changes
+        id: changes
+        run: |
+          if git diff --quiet -- charts/kanban/values/dev.yaml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit GitOps update
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add charts/kanban/values/dev.yaml
+
+          git commit \
+            -m "chore(gitops): promote image to ${IMAGE_TAG}"
+
+          git push

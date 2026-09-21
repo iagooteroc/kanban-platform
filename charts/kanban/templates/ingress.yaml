@@ -14,16 +14,18 @@ spec:
   ingressClassName: {{ . }}
   {{- end }}
   rules:
-    - host: {{ .Values.ingress.host }}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host }}
       http:
         paths:
-          - path: {{ .Values.ingress.path }}
-            {{- with .pathType }}
-            pathType: {{ . }}
-            {{- end }}
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
             backend:
               service:
                 name: {{ include "kanban.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
+          {{- end }}
+    {{- end }}
 {{- end }}

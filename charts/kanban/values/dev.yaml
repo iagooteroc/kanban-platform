@@ -11,4 +11,10 @@ service:
   targetPort: http
 
 ingress:
-  enabled: false
+  enabled: true
+  className: nginx
+  hosts:
+    - host: taskflow.local
+      paths:
+        - path: /
+          pathType: Prefix

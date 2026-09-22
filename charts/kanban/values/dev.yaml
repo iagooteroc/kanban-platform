@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: ghcr.io/iagooteroc/kanban-platform
-  tag: 808364a8628a245bc9e3de8192186784b84eaad5
+  tag: 224a93220bc523f1dfc464dc84fd539b1419f6d3
   pullPolicy: IfNotPresent
 
 service:

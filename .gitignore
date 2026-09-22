@@ -1,2 +1,8 @@
 # Local TLS certificates and other temporary files
 tmp/
+
+# OpenTofu / Terraform local state
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/generated/

@@ -1,0 +1,27 @@
+---
+- name: Configure the local TaskFlow learning environment
+  hosts: local
+  gather_facts: true
+
+  vars_files:
+    - group_vars.yaml
+
+  tasks:
+    - name: Create TaskFlow automation directory
+      ansible.builtin.file:
+        path: "{{ taskflow_directory }}"
+        state: directory
+        mode: "0755"
+
+    - name: Create environment information file
+      ansible.builtin.copy:
+        dest: "{{ taskflow_directory }}/environment.txt"
+        content: |
+          Project: TaskFlow
+          Managed by: Ansible
+          Environment: {{ taskflow_environment }}
+        mode: "0644"
+
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: "TaskFlow {{ taskflow_environment }} environment configured successfully"

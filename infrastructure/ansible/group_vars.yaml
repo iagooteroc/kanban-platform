@@ -1,0 +1,3 @@
+---
+taskflow_environment: local-learning
+taskflow_directory: "{{ ansible_user_dir }}/taskflow-automation"
